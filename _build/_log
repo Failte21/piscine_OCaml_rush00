@@ -1,39 +1,28 @@
 ### Starting build.
-Backtrace:
-                      - Failed to build the target main.d.byte
-                          - Building main.d.byte:
-                              - Failed to build all of these:
-                                  - Building main.d.cmo:
-                                      - Failed to build all of these:
-                                          - Building main.d.ml
-                                          - Building main.ml:
-                                              - Failed to build all of these:
-                                                  - Building main.mly
-                                                  - Building main.mll
-                                          - Building main.d.mli:
-                                              - Building main.d.mly
-                                          - Building main.mli:
-                                              - Building main.mly
-                                          - Building main.d.mlpack
-                                          - Building main.d.mli:
-                                              - Building main.d.mly
-                                          - Building main.mlpack
-                                  - Building main.d.cmo:
-                                      - Failed to build all of these:
-                                          - Building main.d.ml:
-                                              - Failed to build all of these:
-                                                  - Building main.d.mly
-                                                  - Building main.d.mll
-                                          - Building main.ml:
-                                              - Failed to build all of these:
-                                                  - Building main.mly
-                                                  - Building main.mll
-                                          - Building main.d.mli:
-                                              - Building main.d.mly
-                                          - Building main.mli:
-                                              - Building main.mly
-                                          - Building main.d.mlpack
-                                          - Building main.d.mli:
-                                              - Building main.d.mly
-                                          - Building main.mlpack
-# Compilation unsuccessful.
+# Target: sources/main.ml.depends, tags: { bin_annot, extension:ml, file:sources/main.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules sources/main.ml > sources/main.ml.depends # cached
+# Target: sources/Board.ml.depends, tags: { bin_annot, extension:ml, file:sources/Board.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules sources/Board.ml > sources/Board.ml.depends
+# Target: sources/Board.cmo, tags: { bin_annot, byte, compile, extension:cmo, extension:ml, file:sources/Board.cmo, file:sources/Board.ml, implem, ocaml, quiet }
+ocamlc.opt -c -bin-annot -I sources -I interfaces -o sources/Board.cmo sources/Board.ml
++ ocamlc.opt -c -bin-annot -I sources -I interfaces -o sources/Board.cmo sources/Board.ml
+File "sources/Board.ml", line 33, characters 27-43:
+33 | 	let parseString s = match String.lowercase (String.trim s) with
+                                ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.lowercase
+Use String.lowercase_ascii instead.
+# Target: sources/main.cmo, tags: { bin_annot, byte, compile, extension:cmo, extension:ml, file:sources/main.cmo, file:sources/main.ml, implem, ocaml, quiet }
+ocamlc.opt -c -bin-annot -I sources -I interfaces -o sources/main.cmo sources/main.ml # cached
+# Target: sources/Board.cmx, tags: { bin_annot, compile, extension:cmx, extension:ml, file:sources/Board.cmx, file:sources/Board.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -bin-annot -I sources -I interfaces -o sources/Board.cmx sources/Board.ml
++ ocamlopt.opt -c -bin-annot -I sources -I interfaces -o sources/Board.cmx sources/Board.ml
+File "sources/Board.ml", line 33, characters 27-43:
+33 | 	let parseString s = match String.lowercase (String.trim s) with
+                                ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.lowercase
+Use String.lowercase_ascii instead.
+# Target: sources/main.cmx, tags: { bin_annot, compile, extension:cmx, extension:ml, file:sources/main.cmx, file:sources/main.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -bin-annot -I sources -I interfaces -o sources/main.cmx sources/main.ml # cached
+# Target: sources/main.native, tags: { bin_annot, dont_link_with, extension:native, file:sources/main.native, link, native, ocaml, program, quiet }
+ocamlopt.opt -I sources sources/Board.cmx sources/main.cmx -o sources/main.native
+# Compilation successful.
