@@ -12,5 +12,5 @@ val getLineSizePiece : int -> int
 val getCase : t -> move -> t
 
 val checkWin : t -> Player.t option
-val play: t -> Player.t -> move -> t
+val play: t -> Player.t -> move -> (t, string) result
 val newBoard : int -> t

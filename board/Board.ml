@@ -78,23 +78,35 @@ let check_win board = is_full board || three_row board
 let rec update_case boards player move moves is_last =
 	let rec update_case_aux board n = match board with
 	    | h::t when (move - 1) = n -> (
-	    	if is_last then (Conquered player)::t else (_play h player moves)::t
+        if is_last then (
+          match h with
+            | Free -> ((Conquered player)::t, true)
+            | _ -> ([], false)
+        ) else
+          let (res, success) = _play h player moves in
+          (res::t, success)
 	    )
-	    | h::t -> h::(update_case_aux t (n + 1))
-	    | e -> e in
+      | h::t ->
+        let (res, success) = update_case_aux t (n + 1) in
+        (h::res, success)
+	    | _ -> ([], false) in
 	update_case_aux boards 0
 
 and _play board player moves =
 	match moves with
 		| h::[] -> ( match board with
-			| Board boards -> Board (update_case boards player h [] true)
-			| _ -> Conquered player
+      | Board boards -> 
+        let (new_boards, success) = update_case boards player h [] true in
+        (Board new_boards, success)
+			| _ -> (Board [], false)
 		)
 		| h::t -> ( match board with
-			| Board boards -> Board (update_case boards player h t false)
-			| _ -> Conquered player
+			| Board boards ->
+        let (new_boards, success) = update_case boards player h t false in
+        (Board new_boards, success)
+			| _ -> (Board [], false)
 		)
-		| _ -> Conquered player
+		| _ -> (Board [], false)
 
 let rec getCase board move: t =
 	match board with
@@ -112,8 +124,11 @@ let rec updateAll board player =
 		| e -> e
 
 let play board player moves =
-	let board_after_play = _play board player moves in
-	updateAll board_after_play player
+  let (board_after_play, success) = _play board player moves in
+  if success then
+  	let updated_board = (updateAll board_after_play player) in
+    Ok updated_board
+  else Error "Illegal move"
 
 let checkWin = function
 	| Conquered player -> Some player
