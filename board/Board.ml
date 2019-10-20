@@ -22,9 +22,9 @@ let is_full boards =
 let rec check_h l p =
   match l with 
 	| a::b::c::t -> (match a with
-		| Conquered p -> (match b with
-			| Conquered p -> (match c with
-				| Conquered p -> true
+		| Conquered p2 when p2 = p -> (match b with
+			| Conquered p2 when p2 = p -> (match c with
+				| Conquered p2 when p2 = p -> true
 				| _ -> false
 			)
 			| _ -> false
@@ -36,27 +36,27 @@ let rec check_h l p =
 let rec check_v l p =
   match l with 
 	| [a; b; c; d; e; f; g; h; i] -> (match a with
-		| Conquered p -> (match d with
-			| Conquered p -> (match g with
-				| Conquered p -> true
+		| Conquered p2 when p2 = p -> (match d with
+			| Conquered p2 when p2 = p -> (match g with
+				| Conquered p2 when p2 = p -> true
 				| _ -> false
 			)
 			| _ -> false
 		)
 		| _ -> false
 	) || (match b with
-    | Conquered p -> (match e with
-      | Conquered p -> (match h with
-        | Conquered p -> true
+    | Conquered p2 when p2 = p -> (match e with
+      | Conquered p2 when p2 = p -> (match h with
+        | Conquered p2 when p2 = p -> true
         | _ -> false
       )
       | _ -> false
     )
     | _ -> false
   ) || (match c with
-    | Conquered p -> (match f with
-      | Conquered p -> (match i with
-        | Conquered p -> true
+    | Conquered p2 when p2 = p -> (match f with
+      | Conquered p2 when p2 = p -> (match i with
+        | Conquered p2 when p2 = p -> true
         | _ -> false
       )
       | _ -> false
@@ -68,9 +68,9 @@ let rec check_v l p =
 let rec check_d_a l p =
   match l with 
 	| _::_::a::_::b::_::c::_ -> (match a with
-		| Conquered p -> (match b with
-			| Conquered p -> (match c with
-				| Conquered p -> true
+		| Conquered p2 when p2 = p -> (match b with
+			| Conquered p2 when p2 = p -> (match c with
+				| Conquered p2 when p2 = p -> true
 				| _ -> false
 			)
 			| _ -> false
@@ -82,9 +82,9 @@ let rec check_d_a l p =
 let rec check_d_b l p =
   match l with 
 	| a::_::_::_::b::_::_::_::c::[] -> (match a with
-		| Conquered p -> (match b with
-			| Conquered p -> (match c with
-				| Conquered p -> true
+		| Conquered p2 when p2 = p -> (match b with
+			| Conquered p2 when p2 = p -> (match c with
+				| Conquered p2 when p2 = p -> true
 				| _ -> false
 			)
 			| _ -> false
