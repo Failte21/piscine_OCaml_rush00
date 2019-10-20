@@ -101,6 +101,91 @@ let three_row board player =
 
 let check_win board player = is_full board || three_row board player
 
+let rec update_b board n player =
+  match board with
+    | h::t when n = 0 -> (Conquered player)::t
+    | h::t -> h::(update_b t (n - 1) player)
+    | e -> Printf.printf "..."; e 
+
+let rec update_b_if board n player acc =
+  match board with
+    | h::t when n = 0 -> (
+      match h with
+        | Conquered _ -> []
+        | _ -> [Conquered player]
+    )
+    | h::t -> update_b_if t (n - 1) player acc
+    | e -> acc
+
+  
+let rec minmax_aux best cpt b board this_player opponent player_int =
+  let player = if player_int = 1 then this_player else opponent in
+  print_endline "...";
+  match b with
+    | h::t -> (
+      match h with
+        | Conquered _ -> minmax_aux best (cpt + 1) t board this_player opponent player_int
+        | _ -> (
+          let updated_board = update_b board cpt player in
+          let score = -(minmax updated_board this_player opponent (-player_int)) in
+          Printf.printf "score: %d" score;
+          let new_best = max score best in
+          minmax_aux new_best (cpt + 1) t updated_board this_player opponent player_int
+        )
+    )
+    | [] -> if best == -2 then 0 else best
+
+and minmax board this_player opponent player_int =
+  let pwin = check_win board this_player in
+  let owin = check_win board opponent in
+  if pwin then if player_int = 1 then 1 else (-1) else
+  if owin then if player_int = 1 then (-1) else 1 else
+  minmax_aux (-2) 0 board board this_player opponent player_int
+
+(* private func minimax(board: Array<Player>, player: Player) -> Int {
+    if let winner = self.getWinner(board) as Player {
+      return winner.rawValue * player.rawValue // -1 * -1 || 1 * 1
+    }
+
+    var move = -1
+    var score = -2
+
+    for var i = 0; i < 9; ++i { // For all moves
+        if board[i] == Player.Blank { // Only possible moves
+            var boardWithNewMove = board // Copy board to make it mutable
+            boardWithNewMove[i] = player // Try the move
+            let scoreForTheMove = -self.minimax(boardWithNewMove, player: self.getOponnentFor(player)) // Count negative score for oponnent
+            if scoreForTheMove > score {
+                score = scoreForTheMove
+                move = i
+            } // Picking move that gives oponnent the worst score
+        }
+    }
+    if move == -1 {
+        return 0 // No move - it's a draw
+    }
+    return score
+} *)
+
+let available_boards board player =
+  List.fold_left (fun acc i -> (
+    acc @ (update_b_if board i player [])
+  )) [] (0--9)
+
+let findBestMove board this_player opponent =
+  let available_moves = available_boards board this_player in
+  let start = 9 - (List.length available_moves) in
+  let rec findBestMove_aux current_board best_score best_move i =
+    match current_board with
+      | h::t -> (
+        let score = minmax current_board this_player opponent 1 in
+        let (new_best_move, new_best_score) = if score > best_score then (i, score) else (best_move, best_score) in
+        Printf.printf "score %d, i: %d\n" new_best_score new_best_move;
+        findBestMove_aux t new_best_score new_best_move (i + 1)
+      )
+      | _ -> best_move in 
+    findBestMove_aux available_moves (-1) 0 start
+
 let rec update_case boards player move moves is_last =
 	let rec update_case_aux board n = match board with
 	    | h::t when (move - 1) = n -> (

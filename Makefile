@@ -11,4 +11,6 @@ build_byte:
 clean:
 	ocamlbuild -clean
 
+re: clean all
+
 .PHONY: build_native build_byte clean
