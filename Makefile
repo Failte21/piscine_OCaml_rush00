@@ -3,10 +3,10 @@ NAME = main
 all: build_byte build_native
 
 build_native:
-	ocamlbuild -tag bin_annot -I sources -I interfaces ${NAME}.native
+	ocamlbuild -r -tag bin_annot -Is board,player,color,result,option ${NAME}.native
 
 build_byte:
-	ocamlbuild -tag bin_annot -I sources -I interfaces ${NAME}.byte
+	ocamlbuild -r -tag bin_annot -Is board,player,color,result,option ${NAME}.byte
 
 clean:
 	ocamlbuild -clean

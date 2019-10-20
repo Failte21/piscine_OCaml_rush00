@@ -1,37 +1,4 @@
-type ('a, 'b) result =
-	| Ok of 'a
-	| Err of 'b
-
-val resultFlatMap : (('a, 'b) result -> ('a, 'b) result) -> ('a, 'b) result
-
-type 'a option =
-	| Some of 'a
-	| None
-
-module Color :
-sig
-	type t = Blue | Green | Red | White | Yellow | Cyan | Magenta
-
-	val toTermString : t -> string
-	val toString : t -> string
-	val applyColorToString : t -> string -> string
-	val parseString : string -> t
-end
-
-module Player :
-sig
-	type brain = Human | Robot
-	type t = Color.t * string * brain
-
-	(* val newPlayer : string -> string -> t *)
-
-	val toString : t -> string
-	val toStringVerbose : t -> string
-
-	(* "A Blue" | "X Magenta" and checks if not already in player list -> Returns a result *)
-	val parseString : string -> t list -> (t, string) result
-end
-
+(* val resultFlatMap : (('a, 'b) result -> ('a, 'b) result) -> ('a, 'b) result *)
 type t =
 	| Board of t list
 	| Conquered of Player.t
@@ -55,7 +22,7 @@ val check : t -> (t * (Player.t option))
 *)
 
 val toString : t -> int -> string
-val translate : move -> int
+(* val translate : move -> int *)
 
 val getLineSizePiece : int -> int
 val getCase : t -> move -> t
