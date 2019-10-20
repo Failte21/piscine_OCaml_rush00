@@ -1,29 +1,7 @@
-type ('a, 'b) result =
-	| Ok of 'a
-	| Err of 'b
-
-type 'a option =
-	| Some of 'a
-	| None
-
 let (--) i j =
 	let rec aux n acc =
 	  if n < i then acc else aux (n-1) (n :: acc) in
 	aux j []
-
-module Player =
-struct
-	type brain = Human | Robot
-	type t = Color.t * string * brain
-
-	let brainToString brain = match brain with
-		| Human -> "Human"
-		| Robot -> "Robot"
-
-	let toString (color, s, _) = Color.applyColorToString color s
-	let toStringVerbose (color, s, brain) = "Player " ^ toString (color, s, brain) ^ " (" ^ brainToString brain ^")"
-
-end
 
 type t =
 	| Board of t list

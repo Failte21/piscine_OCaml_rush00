@@ -1,27 +1,4 @@
-type ('a, 'b) result =
-	| Ok of 'a
-	| Err of 'b
-
 (* val resultFlatMap : (('a, 'b) result -> ('a, 'b) result) -> ('a, 'b) result *)
-
-type 'a option =
-	| Some of 'a
-	| None
-
-module Player :
-sig
-	type brain = Human | Robot
-	type t = Color.t * string * brain
-
-	(* val newPlayer : string -> string -> t *)
-
-	val toString : t -> string
-	val toStringVerbose : t -> string
-
-	(* "A Blue" | "X Magenta" and checks if not already in player list -> Returns a result *)
-	(* val parseString : string -> t list -> (t, string) result *)
-end
-
 type t =
 	| Board of t list
 	| Conquered of Player.t
