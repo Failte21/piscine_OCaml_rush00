@@ -15,3 +15,4 @@ let newPlayer color name _3brain =
 
 let playerColor (color, name, brain) = color
 let playerName (color, name, brain) = name
+let isRobot (_, _, brain) = if brain = Robot then true else false

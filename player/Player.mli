@@ -8,5 +8,6 @@ val toStringVerbose : t -> string
 
 val playerColor : t -> Color.t
 val playerName : t -> string
+val isRobot : t -> bool
 (* "A Blue" | "X Magenta" and checks if not already in player list -> Returns a result *)
 (* val parseString : string -> t list -> (t, string) result *)
