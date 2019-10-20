@@ -24,7 +24,7 @@ let toString t = match t with
   | Cyan -> applyColorToString Cyan "Cyan"
   | White -> applyColorToString White "White"
 
-let parseString s = match String.lowercase (String.trim s) with
+let parseString s = match String.lowercase_ascii (String.trim s) with
   | "red" | "r" -> Ok Red
   | "green" | "g" -> Ok Green
   | "yellow" | "y" -> Ok Yellow
