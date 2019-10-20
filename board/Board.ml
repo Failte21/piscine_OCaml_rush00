@@ -20,7 +20,7 @@ let is_full boards =
 	) boards
 
 let rec check_h l p =
-  match l with 
+  match l with
 	| a::b::c::t -> (match a with
 		| Conquered p2 when p2 = p -> (match b with
 			| Conquered p2 when p2 = p -> (match c with
@@ -34,7 +34,7 @@ let rec check_h l p =
 	| _ -> false
 
 let rec check_v l p =
-  match l with 
+  match l with
 	| [a; b; c; d; e; f; g; h; i] -> (match a with
 		| Conquered p2 when p2 = p -> (match d with
 			| Conquered p2 when p2 = p -> (match g with
@@ -66,7 +66,7 @@ let rec check_v l p =
 	| _ -> false
 
 let rec check_d_a l p =
-  match l with 
+  match l with
 	| _::_::a::_::b::_::c::_ -> (match a with
 		| Conquered p2 when p2 = p -> (match b with
 			| Conquered p2 when p2 = p -> (match c with
@@ -80,7 +80,7 @@ let rec check_d_a l p =
 	| _ -> false
 
 let rec check_d_b l p =
-  match l with 
+  match l with
 	| a::_::_::_::b::_::_::_::c::[] -> (match a with
 		| Conquered p2 when p2 = p -> (match b with
 			| Conquered p2 when p2 = p -> (match c with
@@ -121,7 +121,7 @@ let rec update_case boards player move moves is_last =
 and _play board player moves =
 	match moves with
 		| h::[] -> ( match board with
-      | Board boards -> 
+      | Board boards ->
         let (new_boards, success) = update_case boards player h [] true in
         (Board new_boards, success)
 			| _ -> (Board [], false)
@@ -233,3 +233,22 @@ let toString board order =
 		| (x, y) ->
 			loop (acc ^ oneCase (x, y) board order) (x + 1, y) max
 	in loop "" (0, 0) max
+
+let bestMove player board =
+	let rec browse board index = match board with
+		| Free -> [index + 1]
+		| Conquered player -> []
+		| Board b_list ->
+			let rec browse_in_list b_list index = match b_list with
+				| hd::tl ->
+					let result = browse hd index in
+					if result = []
+					then browse_in_list tl (index + 1)
+					else result
+				| [] -> []
+			in (index + 1)::(browse_in_list b_list 0)
+	in
+
+	match (browse board 0) with
+	| hd::tl -> tl
+	| [] -> []
