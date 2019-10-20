@@ -52,7 +52,7 @@ val applyMove : move -> case -> Player.t -> (t, string * t) result
 val check : t -> (t * (Player.t option))
 *)
 
-val toString : int -> string
+val toString : board -> int -> string
 val translate : move -> int
 
 val getLineSizePiece : int -> int

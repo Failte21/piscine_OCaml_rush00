@@ -62,7 +62,7 @@ type t =
 
 type move = int list
 
-let getLineSizeChar order = ((24 + 5) * (int_of_float(3.0 ** float_of_int (order - 1))) + 1 * order)
+let getLineSizeChar order = (8 * (int_of_float(3.0 ** float_of_int (order - 1))))
 let getNumberLinesChar order = (4 * int_of_float (3.0 ** float_of_int(order - 1)))
 
 let getLineSizePiece order = int_of_float (3.0 ** float_of_int (order))
@@ -89,12 +89,26 @@ let getMovesOfPixel (x, y) order =
 		| order -> loop (acc @ [getMove (x, y) order]) (subOrder (x, y) order) (order - 1)
 	in loop [] (x, y) order
 
-let toString  order =
+let displayOneCase (x, y) board order =
+	let move = getMovesOfPixel (x, y) order in
+	match getCase board move with
+		| Conquered player -> " " ^ Player.toString player ^ " "
+		| _ -> " -"
+
+let displayWithBoarder (x, y) board order =
+	displayOneCase (x, y) board order ^ " |"
+
+let toString board order =
 	let max = getLineSizePiece order in
 	let rec loop acc (x, y) max = match (x, y) with
-		| (x, y) when (y + 1) mod 3 = 0 && x >= max -> loop (acc ^ "\n" ^ String.make (max * 3) '-' ^ "\n") (0, y + 1) max
-		| (x, y) when x >= max && y >= max - 1 -> acc ^ "\n"
-		| (x, y) when x >= max -> loop (acc ^ "\n") (0, y + 1) max
-		| (x, y) when (x + 1) mod 3 = 0 -> loop (acc ^ " - |") (x + 1, y) max
-		| (x, y) -> loop (acc ^ " - ") (x + 1, y) max
+		| (x, y) when x >= max && y >= max - 1 ->
+			acc ^ "\n"
+		| (x, y) when (y + 1) mod 3 = 0 && x >= max ->
+			loop (acc ^ "\n" ^ String.make (getLineSizeChar order) '-' ^ "\n") (0, y + 1) max
+		| (x, y) when x >= max ->
+			loop (acc ^ "\n") (0, y + 1) max
+		| (x, y) when (x + 1) mod 3 = 0 ->
+			loop (acc ^ displayWithBoarder (x, y) board order) (x + 1, y) max
+		| (x, y) ->
+			loop (acc ^ displayOneCase (x, y) board order) (x + 1, y) max
 	in loop "" (0, 0) max
