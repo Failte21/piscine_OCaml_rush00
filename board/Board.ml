@@ -3,6 +3,9 @@ let (--) i j =
 	  if n < i then acc else aux (n-1) (n :: acc) in
 	aux j []
 
+let ( ** ) a b =
+	int_of_float (float_of_int a ** float_of_int b)
+
 type t =
 	| Board of t list
 	| Conquered of Player.t
@@ -126,10 +129,10 @@ let newBoard = function
 				| _ -> Free in
 			newBoard_aux depth
 
-let getLineSizeChar order = (8 * (int_of_float(3.0 ** float_of_int (order - 1))))
-let getNumberLinesChar order = (4 * int_of_float (3.0 ** float_of_int(order - 1)))
+let getLineSizeChar order = (8 * 3 ** (order - 1))
+let getNumberLinesChar order = (4 * (3 ** (order - 1)))
 
-let getLineSizePiece order = int_of_float (3.0 ** float_of_int (order))
+let getLineSizePiece order = 3 ** order
 
 let getMove (x, y) order =
 	let x = x / getLineSizePiece (order - 1) in
@@ -153,14 +156,27 @@ let getMovesOfPixel (x, y) order =
 		| order -> loop (acc @ [getMove (x, y) order]) (subOrder (x, y) order) (order - 1)
 	in loop [] (x, y) order
 
-let displayOneCase (x, y) board order =
+let oneCase (x, y) board order =
 	let move = getMovesOfPixel (x, y) order in
 	match getCase board move with
 		| Conquered player -> " " ^ Player.toString player
 		| _ -> " -"
 
-let displayWithBoarder (x, y) board order =
-	displayOneCase (x, y) board order ^ " |"
+let withBorder (x, y) board order =
+	oneCase (x, y) board order ^ " |"
+
+let getRepeat order orderbase = 3 ** (orderbase - order)
+
+let ySepLine y order =
+	let rec repeat s n = match n with
+		| 0 -> ""
+		| y -> s ^ repeat s (n - 1)
+	in
+	let rec loop y order orderbase = match y with
+		| y when (y + 1) mod (3 ** (order - 1)) = 0 ->
+			"\n " ^ repeat (String.make (getLineSizeChar order - 3) '-' ^ " | ") (getRepeat order orderbase) ^ "\n"
+		| y -> loop y (order - 1) orderbase
+	in loop y order order
 
 let toString board order =
 	let max = getLineSizePiece order in
@@ -168,11 +184,11 @@ let toString board order =
 		| (x, y) when x >= max && y >= max - 1 ->
 			acc ^ "\n"
 		| (x, y) when (y + 1) mod 3 = 0 && x >= max ->
-			loop (acc ^ "\n" ^ String.make (getLineSizeChar order) '-' ^ "\n") (0, y + 1) max
+			loop (acc ^ ySepLine y order) (0, y + 1) max
 		| (x, y) when x >= max ->
 			loop (acc ^ "\n") (0, y + 1) max
 		| (x, y) when (x + 1) mod 3 = 0 ->
-			loop (acc ^ displayWithBoarder (x, y) board order) (x + 1, y) max
+			loop (acc ^ withBorder (x, y) board order) (x + 1, y) max
 		| (x, y) ->
-			loop (acc ^ displayOneCase (x, y) board order) (x + 1, y) max
+			loop (acc ^ oneCase (x, y) board order) (x + 1, y) max
 	in loop "" (0, 0) max
