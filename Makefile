@@ -1,11 +1,14 @@
-NAME = main.byte
+NAME = main
 
-all: build
+all: build_byte build_native
 
-build:
-	ocamlbuild -use-ocamlfind ${NAME}
+build_native:
+	ocamlbuild -tag bin_annot -I sources -I interfaces ${NAME}.native
+
+build_byte:
+	ocamlbuild -tag bin_annot -I sources -I interfaces ${NAME}.byte
 
 clean:
 	ocamlbuild -clean
 
-.PHONY: build clean
+.PHONY: build_native build_byte clean
