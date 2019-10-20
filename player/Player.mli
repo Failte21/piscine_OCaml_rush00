@@ -1,7 +1,7 @@
 type brain = Human | Robot
 type t = Color.t * string * brain
 
-val newPlayer : string -> string -> string -> t
+val newPlayer : string -> string -> string -> (t, string) result
 
 val toString : t -> string
 val toStringVerbose : t -> string

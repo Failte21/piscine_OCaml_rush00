@@ -22,10 +22,12 @@ let get_error res = match res with
 let parseString s = match String.split_on_char ' ' s with
         | letter :: color -> begin match (String.length letter = 1 && is_ascii letter, color) with
                 | (_, []) | (_, (_::_::_)) | (false, _)-> Error ("Wrong input : \"" ^ s ^ "\"")
-                | (true, (x::xs)) -> Ok (Player.newPlayer x letter "Human")
+                | (true, (x::xs)) -> begin match Player.newPlayer x letter "Human" with
+                        | Ok a -> Ok a
+                        | Error b -> Error ("Wrong input : \"" ^ s ^ "\"")
+                        end
                 end
         | invalid -> Error ("Wrong input : \"" ^ s ^ "\"")
-
 
 let ft_string_all fct str =
         let rec loop len =
@@ -75,7 +77,7 @@ let createIa pSet =
                 end
 
 let newPlayer ask playerSet =
-        if matchYesNo ask (askUser ask) = false then createIa playerSet
+        if askYes ask = false then createIa playerSet
                else begin let rec loop player =
                        if is_ok player = false then begin
                                print_endline (get_error player);
@@ -99,7 +101,7 @@ let checkInt _ =
                in
                 loop (askUser "What is the size of the map ? <1..5>")
 
-let quickStart _ = (Player.newPlayer "Red" "O" "", Player.newPlayer "Blue" "X" "", 2, Board.newBoard 2)
+let quickStart _ = (get_ok (Player.newPlayer "Red" "O" ""), get_ok (Player.newPlayer "Blue" "X" ""), 2, Board.newBoard 2)
 
 let start _ =
         if askYes "Quick start ? <Yes,No>" = true then quickStart()
@@ -132,4 +134,3 @@ let rec givenPosition size =
                 | ([], _) -> begin print_endline "Wrong input"; givenPosition size end
                 | (_, false) -> begin print_endline ("Wrong Deapth, please give me " ^ string_of_int size ^ " numbers"); givenPosition size end
                 | ((x::xs), _) -> loop x xs
-
