@@ -2,6 +2,8 @@ type ('a, 'b) result =
 	| Ok of 'a
 	| Err of 'b
 
+val resultFlatMap : (('a, 'b) result -> ('a, 'b) result) -> ('a, 'b) result
+
 type 'a option =
 	| Some of 'a
 	| None
@@ -52,13 +54,16 @@ val applyMove : move -> case -> Player.t -> (t, string * t) result
 val check : t -> (t * (Player.t option))
 *)
 
-val toString : board -> int -> string
+val toString : t -> int -> string
 val translate : move -> int
 
 val getLineSizePiece : int -> int
-val getCase : int * int -> int -> int
-val subOrder : int * int -> int -> int * int
-val getMovesOfPixel : x * y -> int -> move
+val getCase : t -> move -> t
+
+val checkWin : t -> Player.t option
+val play: t -> Player.t -> move -> t
+val newBoard : int -> t
+
 
 (*
  - - - |
