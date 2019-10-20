@@ -19,37 +19,58 @@ let is_full boards =
 		| _ -> false
 	) boards
 
-let rec check_h = function
+let rec check_h l p =
+  match l with 
 	| a::b::c::t -> (match a with
-		| Conquered _ -> (match b with
-			| Conquered _ -> (match c with
-				| Conquered _ -> true
+		| Conquered p -> (match b with
+			| Conquered p -> (match c with
+				| Conquered p -> true
+				| _ -> false
+			)
+			| _ -> false
+		)
+		| _ -> false || check_h t p
+	)
+	| _ -> false
+
+let rec check_v l p =
+  match l with 
+	| [a; b; c; d; e; f; g; h; i] -> (match a with
+		| Conquered p -> (match d with
+			| Conquered p -> (match g with
+				| Conquered p -> true
 				| _ -> false
 			)
 			| _ -> false
 		)
 		| _ -> false
-	)
+	) || (match b with
+    | Conquered p -> (match e with
+      | Conquered p -> (match h with
+        | Conquered p -> true
+        | _ -> false
+      )
+      | _ -> false
+    )
+    | _ -> false
+  ) || (match c with
+    | Conquered p -> (match f with
+      | Conquered p -> (match i with
+        | Conquered p -> true
+        | _ -> false
+      )
+      | _ -> false
+    )
+    | _ -> false
+  )
 	| _ -> false
 
-let rec check_v = function
-	| a::t::e::b::f::g::c::h -> (match a with
-		| Conquered _ -> (match b with
-			| Conquered _ -> (match c with
-				| Conquered _ -> true
-				| _ -> false
-			)
-			| _ -> false
-		)
-		| _ -> false
-	)
-	| _ -> false
-
-let rec check_d_a = function
+let rec check_d_a l p =
+  match l with 
 	| _::_::a::_::b::_::c::_ -> (match a with
-		| Conquered _ -> (match b with
-			| Conquered _ -> (match c with
-				| Conquered _ -> true
+		| Conquered p -> (match b with
+			| Conquered p -> (match c with
+				| Conquered p -> true
 				| _ -> false
 			)
 			| _ -> false
@@ -58,11 +79,12 @@ let rec check_d_a = function
 	)
 	| _ -> false
 
-let rec check_d_b = function
+let rec check_d_b l p =
+  match l with 
 	| a::_::_::_::b::_::_::_::c::[] -> (match a with
-		| Conquered _ -> (match b with
-			| Conquered _ -> (match c with
-				| Conquered _ -> true
+		| Conquered p -> (match b with
+			| Conquered p -> (match c with
+				| Conquered p -> true
 				| _ -> false
 			)
 			| _ -> false
@@ -71,9 +93,13 @@ let rec check_d_b = function
 	)
 	| _ -> false
 
-let three_row board = check_v board || check_h board || check_d_a board || check_d_b board
+let three_row board player =
+  check_v board player ||
+  check_h board player ||
+  check_d_a board player ||
+  check_d_b board player
 
-let check_win board = is_full board || three_row board
+let check_win board player = is_full board || three_row board player
 
 let rec update_case boards player move moves is_last =
 	let rec update_case_aux board n = match board with
@@ -116,7 +142,7 @@ let rec getCase board move: t =
 		)
 		| e -> e
 
-let update board player = if check_win board then Conquered player else Board board
+let update board player = if check_win board player then Conquered player else Board board
 
 let rec updateAll board player =
 	match board with
