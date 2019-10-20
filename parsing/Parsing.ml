@@ -26,6 +26,7 @@ let parseString s = match String.split_on_char ' ' s with
                 end
         | invalid -> Error ("Wrong input : \"" ^ s ^ "\"")
 
+
 let ft_string_all fct str =
         let rec loop len =
                 if len >= 0 then begin
@@ -47,6 +48,8 @@ let rec matchYesNo ask ans = match String.lowercase_ascii (String.trim ans) with
                 | "yes" | "y" -> true
                 | "no" | "n" -> false
                 | _ -> print_endline ("Wrong input: \"" ^ ans ^ "\""); matchYesNo ask (askUser ask)
+
+let askYes s = matchYesNo s (askUser s)
 
 let alreadyTaken player player1 =
         if is_ok player1 = false then false
@@ -85,7 +88,7 @@ let newPlayer ask playerSet =
                 loop (parseString (askUser "Give me his name and his color: <Letter> <Color>"))
                        end
 
-let checkInt =
+let checkInt _ =
         let rec loop s =
                 if (ft_string_all is_digit s) = false || String.length s <> 1 || int_of_string s > 5 || s = "0" then
                         begin
@@ -96,20 +99,31 @@ let checkInt =
                in
                 loop (askUser "What is the size of the map ? <1..5>")
 
-let init =
-        let size = checkInt in
+let quickStart _ = (Player.newPlayer "Red" "O" "", Player.newPlayer "Blue" "X" "", 2, Board.newBoard 2)
+
+let start _ =
+        if askYes "Quick start ? <Yes,No>" = true then quickStart()
+        else begin
+        let size = checkInt() in
         let p1 = newPlayer "Is the first player Human ? <Yes,No>" (Error("No Player set")) in
         let p2 = newPlayer "Is the second player Human ? <Yes,No>" (Ok(p1)) in
-        (p1, p2, size, Board.newBoard size) (*Board.init size*)
+        (p1, p2, size, Board.newBoard size)
+        end
 
-
-let selfInit = (Player.newPlayer "Red" "O", Player.newPlayer "Blue" "X", 2, Board.newBoard 2)
+let restart pa pb size =
+        if askYes "Keep same size ? <Yes,No>" = true then (pa, pb, size, Board.newBoard size)
+        else begin
+                let size = checkInt() in
+                (pa, pb, size, Board.newBoard size)
+        end
 
 
 let rec givenPosition size =
-        let s = askUser "" in
+        let s = askUser "Type position: <1..9> .." in
         let rec loop ix is =
-                if (String.length ix > 3 || ft_string_all is_digit ix = false) then givenPosition size
+                if (String.length ix > 1 || ft_string_all is_digit ix = false) then begin
+                        print_endline "Wrong Input";
+                        givenPosition size end
                 else match is with
                         | [] -> [int_of_string ix]
                         | (x::xs) -> [int_of_string ix] @ loop x xs
@@ -119,17 +133,3 @@ let rec givenPosition size =
                 | (_, false) -> begin print_endline ("Wrong Deapth, please give me " ^ string_of_int size ^ " numbers"); givenPosition size end
                 | ((x::xs), _) -> loop x xs
 
-(*let () =
-        let s = Parsing.askUser "Quick Start ?<Yes,No>" in
-if Parsing.matchYesNo "Quick Start ?<Yes,No>" s = false then
-        begin
-                let (p1, p2, size, _) = Parsing.init in
-print_int size; print_char '\n';
-        print_endline (Player.toStringVerbose p1);
-        print_endline (Player.toStringVerbose p2)
-                        end else begin
-                                let (p3, p4, size2, _) = Parsing.selfInit in
-print_int size2; print_char '\n';
-        print_endline (Player.toStringVerbose p3);
-        print_endline (Player.toStringVerbose p4)
-        end*)
